@@ -1,5 +1,12 @@
 from gpiozero import LED
 from time import sleep
+from google.cloud import speech
+
+import os
+import io
+import sys
+
+
 #left column
 led_1 = LED(17)
 led_3 = LED(27)
@@ -317,13 +324,59 @@ def function_name(string_translate):
         elif i == ' ':
             Braille_Letter_space()
         #numbers
+        else:
+            Braille_Letter_space()
+        #needs else for if not letter or symbol
 
 #-----------------------functions^------------------------------------
 
 
-input_from_user = input("enter a word to translate: ")
-print ("word to translate: " + input_from_user)
+#input_from_user = input("enter a word to translate: ")
+#print ("word to translate: " + input_from_user)
 
 #print(input_from_user[3])
 
-function_name(input_from_user)
+#function_name(input_from_user)
+
+#------------------------speech v--------------------------------------
+# Creates google client
+client = speech.SpeechClient()
+
+# Full path of the audio file, Replace with your file name
+file_name = os.path.join(os.path.dirname(__file__),"test_3.wav")
+
+#Loads the audio file into memory
+with io.open(file_name, "rb") as audio_file:
+    content = audio_file.read()
+    audio = speech.RecognitionAudio(content=content)
+
+config = speech.RecognitionConfig(
+    encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
+    audio_channel_count=2,
+    language_code="en-US",
+)
+
+# Sends the request to google to transcribe the audio
+response = client.recognize(request={"config": config, "audio": audio})
+
+
+# Reads the response
+for result in response.results:
+    print("Transcript: {}".format(result.alternatives[0].transcript))
+    
+
+
+#takes response from google transcribe and converts to list
+final_transcripts = []
+for result in response.results:
+   alternative = result.alternatives[0]
+   final_transcripts.append(alternative.transcript)
+
+#takes list and makes it a string
+output = ""
+for i in final_transcripts:
+    output += ' ' + i
+print(output)
+
+#outputs to braille led
+function_name(output)
