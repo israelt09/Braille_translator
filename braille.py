@@ -1,11 +1,16 @@
 from gpiozero import LED
+from gpiozero import Button
 from time import sleep
 from google.cloud import speech
+
+
 
 import os
 import io
 import sys
-
+import subprocess
+import signal
+import time
 
 #left column
 led_1 = LED(17)
@@ -338,12 +343,26 @@ def function_name(string_translate):
 
 #function_name(input_from_user)
 
+#os.system ('arecord --format=S16_LE --rate=16000 --file-type=wav out.wav')
+#sleep(10)
+#os.system('^C')
+button = Button(16)
+while True:
+    if button.is_pressed:
+        print("Button is pressed")
+        print("recording started")
+        record = 'arecord -d 10 --format=S16_LE --rate=16000 test.wav'
+        p = subprocess.Popen(record, shell=True)
+        sleep(10)
+        print("recording over")
+        break
+
 #------------------------speech v--------------------------------------
 # Creates google client
 client = speech.SpeechClient()
 
 # Full path of the audio file, Replace with your file name
-file_name = os.path.join(os.path.dirname(__file__),"test_3.wav")
+file_name = os.path.join(os.path.dirname(__file__),"test.wav")
 
 #Loads the audio file into memory
 with io.open(file_name, "rb") as audio_file:
@@ -352,7 +371,7 @@ with io.open(file_name, "rb") as audio_file:
 
 config = speech.RecognitionConfig(
     encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
-    audio_channel_count=2,
+    audio_channel_count=1,
     language_code="en-US",
 )
 
@@ -364,6 +383,7 @@ response = client.recognize(request={"config": config, "audio": audio})
 for result in response.results:
     print("Transcript: {}".format(result.alternatives[0].transcript))
     
+
 
 
 #takes response from google transcribe and converts to list
