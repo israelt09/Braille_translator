@@ -2,6 +2,8 @@ from gpiozero import LED
 from gpiozero import Button
 from time import sleep
 from google.cloud import speech
+from Adafruit_CharLCD import Adafruit_CharLCD
+from gpiozero.pins.pigpio import PiGPIOFactory
 
 import os
 import io
@@ -10,25 +12,33 @@ import subprocess
 import signal
 import time
 
+lcd = Adafruit_CharLCD(rs=7, en=8, d4=25, d5=24, d6=23, d7=18, cols=16, lines=2)
 #braille_letters.py
 
+#pi zero ip
+factory = PiGPIOFactory(host='192.168.0.241')
+
 #left column
-led_1 = LED(17)
-led_3 = LED(27)
-led_5 = LED(22)
+led_1 = LED(17,pin_factory=factory)
+led_3 = LED(27,pin_factory=factory)
+led_5 = LED(22,pin_factory=factory)
 #right column
-led_2 = LED(23)
-led_4 = LED(24)
-led_6 = LED(25)
+led_2 = LED(23,pin_factory=factory)
+led_4 = LED(24,pin_factory=factory)
+led_6 = LED(25,pin_factory=factory)
 
 def Braille_Letter_A():
     led_1.on()
+    #lcd.clear()
+    #lcd.message("     A     ")
     sleep(2)
     led_1.off()
      
 def Braille_Letter_B():
     led_1.on()
     led_3.on() 
+    #lcd.clear()
+    #lcd.message("     B    ")
     sleep(2)
     led_1.off()
     led_3.off()
@@ -36,6 +46,8 @@ def Braille_Letter_B():
 def Braille_Letter_C(): 
     led_1.on()
     led_2.on() 
+    #lcd.clear()
+    #lcd.message("     C     ")
     sleep(2)
     led_1.off()
     led_2.off()
@@ -272,7 +284,7 @@ def Braille_Letter_space():
     
     
 def word_interation(string_translate):
-    print("out putting braille")
+    print("outputting braille")
     for i in string_translate:
         #letters
         if i == 'a' or i == 'A':

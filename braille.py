@@ -3,6 +3,8 @@ from gpiozero import Button
 from time import sleep
 from google.cloud import speech
 from Adafruit_CharLCD import Adafruit_CharLCD
+from gpiozero.pins.pigpio import PiGPIOFactory
+
 #importing functions from other file
 from Braille_letters import *
 
@@ -41,7 +43,7 @@ def voice_input():
             print("recording started")
             record = 'arecord -d 10 --format=S16_LE --rate=16000 test.wav'
             p = subprocess.Popen(record, shell=True)
-            #sleep(10)
+            sleep(10)
             print("recording over")
             lcd.clear()
             lcd_display("recording over")
