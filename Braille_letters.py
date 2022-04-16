@@ -4,6 +4,7 @@ from time import sleep
 from google.cloud import speech
 from Adafruit_CharLCD import Adafruit_CharLCD
 from gpiozero.pins.pigpio import PiGPIOFactory
+import RPi.GPIO as GPIO
 
 import os
 import io
@@ -15,17 +16,20 @@ import time
 lcd = Adafruit_CharLCD(rs=7, en=8, d4=25, d5=24, d6=23, d7=18, cols=16, lines=2)
 #braille_letters.py
 
-#pi zero ip
-factory = PiGPIOFactory(host='192.168.0.241')
+#pi zero ip for LEDs
+Ledlight = PiGPIOFactory(host='192.168.0.241')
+#pi zero ip for rumble motor
+motor = PiGPIOFactory(host='192.168.0.241')
 
+#leds
 #left column
-led_1 = LED(17,pin_factory=factory)
-led_3 = LED(27,pin_factory=factory)
-led_5 = LED(22,pin_factory=factory)
+led_1 = LED(4,pin_factory=Ledlight)
+led_3 = LED(27,pin_factory=Ledlight)
+led_5 = LED(22,pin_factory=Ledlight)
 #right column
-led_2 = LED(23,pin_factory=factory)
-led_4 = LED(24,pin_factory=factory)
-led_6 = LED(25,pin_factory=factory)
+led_2 = LED(23,pin_factory=Ledlight)
+led_4 = LED(24,pin_factory=Ledlight)
+led_6 = LED(25,pin_factory=Ledlight)
 
 def Braille_Letter_A():
     led_1.on()
@@ -345,3 +349,4 @@ def word_interation(string_translate):
         else:
             Braille_Letter_space()
         #needs else for if not letter or symbol
+

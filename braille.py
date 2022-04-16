@@ -17,16 +17,23 @@ import signal
 import time
 
 #voice input button
-button_text = Button(26)
+button_text = Button(5) #Gpio 5
 #text input button
-button_voice = Button(12)
+button_voice = Button(26) #Gpio 26
 #start recording button
-button_record = Button(16)
-
+button_record = Button(6) #Gpio 13
+#start locator
+button_locator = Button(23)     # change this
+led_vibration = LED(24)          # change this
+button_repeat = Button(25)       # change this
 # instantiate lcd and specify pins
-lcd = Adafruit_CharLCD(rs=7, en=8, d4=25, d5=24, d6=23, d7=18, cols=16, lines=2)
+lcd = Adafruit_CharLCD(rs=10, en=11, d4=9, d5=27, d6=22, d7=17, cols=16, lines=2, backlight=2)
+
+#global input from user
+input_from_user = ""
 
 def text_input():
+    global input_from_user
     input_from_user = input("enter a word to translate: ")
     print ("word to translate: " + input_from_user)
     lcd_display(input_from_user)
@@ -51,6 +58,7 @@ def voice_input():
             break
 
 def speech_api():
+    global input_from_user
     # Creates google client
     client = speech.SpeechClient()
     # Full path of the audio file, Replace with your file name
@@ -82,9 +90,10 @@ def speech_api():
     output = ""
     for i in final_transcripts:
         output += ' ' + i
-    print(output)
-    lcd_display(output)
-    word_interation(output)
+    input_from_user = output
+    print(input_from_user)
+    lcd_display(input_from_user)
+    word_interation(input_from_user)
 
 def lcd_display(input):
     lcd.clear()
@@ -92,24 +101,55 @@ def lcd_display(input):
     sleep(10)
     lcd.clear()
 
+def locator_func():
+    led_vibration.on()
+    sleep(10)
+    led_vibration.off()
+    print("Locator")
 
+def repeat_func():
+    #print("repeating the hello world")
+    lcd_display(input_from_user)
+    word_interation(input_from_user)
+    #input_from_user is global variable that holds the text to translate
+    
+    
 #main
 
 #asking text or voice input on display
 lcd.clear()
-lcd.message(" Input Options\n Text or Voice")
+lcd.message(" Input Options\n Repeat Text Voice")
 while True:
     if button_text.is_pressed:  
         print("input text")
         lcd.clear()
         lcd.message("  Input Text")
         text_input()
-        break
+        lcd.clear()
+        lcd.message(" Input Options\n Repeat Text Voice")
+        continue
     if button_voice.is_pressed:
         print("input voice")
         lcd.clear()
         lcd.message("  Input Voice")
         voice_input()
-        break
-
+        lcd.clear()
+        lcd.message(" Input Options\n Repeat Text Voice")
+        continue
+    if button_locator.is_pressed:
+        print("Locator")
+        lcd.clear()
+        lcd.message("locator enabled")
+        locator_func()
+        lcd.clear()
+        lcd.message(" Input Options\n Repeat Text Voice")
+        continue
+    if button_record.is_pressed:
+        print("repeat")
+        lcd.clear()
+        lcd.message("repeating message")
+        repeat_func()
+        lcd.clear()
+        lcd.message(" Input Options\n Repeat Text Voice")
+        continue
 #main
