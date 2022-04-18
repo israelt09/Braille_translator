@@ -21,6 +21,9 @@ Ledlight = PiGPIOFactory(host='192.168.0.241')
 #pi zero ip for rumble motor
 motor = PiGPIOFactory(host='192.168.0.241')
 
+#global variables
+braille_speed_config = 2
+
 #leds
 #left column
 led_1 = LED(4,pin_factory=Ledlight)
@@ -31,11 +34,31 @@ led_2 = LED(23,pin_factory=Ledlight)
 led_4 = LED(24,pin_factory=Ledlight)
 led_6 = LED(25,pin_factory=Ledlight)
 
+def SpeedBrailleUp():
+    global braille_speed_config 
+    braille_speed_config += 1
+    lcd.clear()
+    lcd.message("Speed: " + braille_speed_config)
+    sleep(1)
+
+def SpeedBrailleDown():
+    global braille_speed_config
+    if (braille_speed_config == 1):
+        lcd.clear()
+        lcd.message("Speed: " + braille_speed_config)
+        sleep(1)
+        return
+    else:
+        braille_speed_config -= 1
+        lcd.clear()
+        lcd.message("Speed: " + braille_speed_config)
+        sleep(1)
+
 def Braille_Letter_A():
     led_1.on()
     #lcd.clear()
     #lcd.message("     A     ")
-    sleep(2)
+    sleep(braille_speed_config)
     led_1.off()
      
 def Braille_Letter_B():
@@ -43,7 +66,7 @@ def Braille_Letter_B():
     led_3.on() 
     #lcd.clear()
     #lcd.message("     B    ")
-    sleep(2)
+    sleep(braille_speed_config)
     led_1.off()
     led_3.off()
     
@@ -52,7 +75,7 @@ def Braille_Letter_C():
     led_2.on() 
     #lcd.clear()
     #lcd.message("     C     ")
-    sleep(2)
+    sleep(braille_speed_config)
     led_1.off()
     led_2.off()
     
@@ -60,7 +83,7 @@ def Braille_Letter_D():
     led_1.on()
     led_2.on() 
     led_4.on()
-    sleep(2)
+    sleep(braille_speed_config)
     led_1.off()
     led_2.off()
     led_4.off()
@@ -68,7 +91,7 @@ def Braille_Letter_D():
 def Braille_Letter_E():
     led_1.on()
     led_4.on()
-    sleep(2)
+    sleep(braille_speed_config)
     led_1.off()
     led_4.off()
     
@@ -76,7 +99,7 @@ def Braille_Letter_F():
     led_1.on()
     led_2.on() 
     led_3.on()
-    sleep(2)
+    sleep(braille_speed_config)
     led_1.off()
     led_2.off()
     led_3.off()
@@ -349,4 +372,6 @@ def word_interation(string_translate):
         else:
             Braille_Letter_space()
         #needs else for if not letter or symbol
+    lcd.clear()
+    lcd.message(" Input Options\nText Repeat Voice")
 

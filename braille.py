@@ -5,9 +5,8 @@ from google.cloud import speech
 from Adafruit_CharLCD import Adafruit_CharLCD
 from gpiozero.pins.pigpio import PiGPIOFactory
 
-#importing functions from other file
+#importing functions from other file Braille_letters.py
 from Braille_letters import *
-
 
 import os
 import io
@@ -17,21 +16,48 @@ import signal
 import time
 
 #voice input button
-button_text = Button(5) #Gpio 5
-#text input button
-button_voice = Button(26) #Gpio 26
+button_2 = Button(5) #Gpio 5
 #start recording button
-button_record = Button(6) #Gpio 13
+button_3 = Button(6) #Gpio 13
+#text input button
+button_4 = Button(26) #Gpio 26
 #start locator
-button_locator = Button(23)     # change this
-led_vibration = LED(24)          # change this
-button_repeat = Button(25)       # change this
+button_locator = Button(23)       # change this
+#led_vibration = LED(24)          # change this
+
 # instantiate lcd and specify pins
 lcd = Adafruit_CharLCD(rs=10, en=11, d4=9, d5=27, d6=22, d7=17, cols=16, lines=2, backlight=2)
 
-#global input from user
-input_from_user = ""
+#global variables
+input_from_user = "No Previouse Message" #stores text to be translated to braille
 
+def braille_config_controls():
+    while True:
+        if button_2.is_pressed: #braille speed up ++   
+            #SpeedBrailleUp()
+            lcd.clear()
+            lcd.message("Braille Speed\n             <--")
+            continue
+        if button_3.is_pressed: #braille speed up --
+            SpeedBrailleDown()
+            lcd.clear()
+            lcd.message("Braille Speed\n             <--")
+            continue
+        else: #back button
+            break
+
+def config():
+  while True:
+    if button_2.is_pressed: #braille speed controls
+        lcd.clear()
+        lcd.message("Braille Speed\n             <--")
+        braille_config_controls()
+        continue
+    if button_3.is_pressed: #haptics intensity
+        continue
+    if button_4.is_pressed: #back button
+        return 
+  
 def text_input():
     global input_from_user
     input_from_user = input("enter a word to translate: ")
@@ -43,7 +69,7 @@ def voice_input():
     lcd.clear()
     lcd.message("Press to record")
     while True:
-        if button_record.is_pressed:
+        if button_3.is_pressed:
             print("Button is pressed")
             lcd.clear()
             lcd.message("  Recording\n  Started")
@@ -96,9 +122,148 @@ def speech_api():
     word_interation(input_from_user)
 
 def lcd_display(input):
+    #for i in input:
+    temp_var1 = ""
+    temp_var2 = "" 
+    temp_var3 = "" 
+    temp_var4 = "" 
     lcd.clear()
-    lcd.message(input)
-    sleep(10)
+    print(len(input))
+    #displays temp_var1 on top line and temp_var2 on bottom line
+    if((len(input) > 16)and(len(input)<=32)):
+        print("for loop 1")
+        for i in range(16):#adds characters 0-16 to variable temp_var1
+            temp_var1 += input[i]
+        if(len(input)!=32):
+            for j in range(16,(len(input))):#adds characters 16- size of input to variable temp_var2
+                temp_var2 += input[j]
+        else:
+            for j in range(16,32):#adds characters 16-31 to variable temp_var2
+                temp_var2 += input[j]
+        lcd.message(temp_var1 + "\n" + temp_var2)
+        sleep(3)
+    #shows characters 0-31 on top line and scrolls to the left
+    #then shows characters 32-63 on top line and scrolls to the left
+    elif((len(input)>32)and(len(input)<=64)):
+        print("for loop 2")
+        for i in range(32):#adds characters 0-31 to variable temp_var1
+            temp_var1 += input[i]
+        print (temp_var1)
+        if(len(input)!=64):
+            for j in range(32,(len(input))):#adds characters 32- size or input to variable temp_var2
+                temp_var2 += input[j]         
+        else:       
+            for j in range(32, 64):#adds characters 32-63 to variable temp_var2
+                temp_var2 += input[j]
+        print (temp_var2)
+        lcd.message(temp_var1)#displays temp_var1 on top row then scrolls left
+        sleep(3)
+        for x in range(0, 16):
+            lcd.move_left()
+            sleep(.5)
+        sleep(3)
+        lcd.clear()
+        lcd.message(temp_var2)#displays temp_var2 on top row then scrolls left
+        sleep(3)
+        for x in range(0, 16):
+            lcd.move_left()
+            sleep(.5)
+        lcd.clear()
+    #shows characters 0-31 on top line and scrolls to the left
+    #then shows characters 32-63 on top line and scrolls to the left
+    #then shows characters 64-95 on top line and scrolls to the left
+    elif((len(input)>64)and(len(input)<=96)):
+        print("for loop 3")
+        for i in range(32):#adds characters 0-31 to variable temp_var1
+            temp_var1 += input[i]
+        print (temp_var1)
+        for j in range(32, 64):#adds characters 32-63 to variable temp_var2
+            temp_var2 += input[j]
+        print (temp_var2)
+        if(len(input)!=96):
+            for j in range(64,(len(input))):#adds characters 32- size or input to variable temp_var2
+                temp_var3 += input[j] 
+        else:
+            for k in range(64, 96):#adds characters 64-95 to variable temp_var3
+                temp_var3 += input[k]
+        print (temp_var3)
+        lcd.message(temp_var1)#displays temp_var1 on top row then scrolls left
+        sleep(3)
+        for x in range(0, 16):
+            lcd.move_left()
+            sleep(.5)
+        sleep(3)
+        lcd.clear()
+        lcd.message(temp_var2)#displays temp_var2 on top row then scrolls left
+        sleep(3)
+        for x in range(0, 16):
+            lcd.move_left()
+            sleep(.5)
+        sleep(3)
+        lcd.clear()
+        lcd.message(temp_var3)#displays temp_var3 on top row then scrolls left
+        sleep(3)
+        for x in range(0, 16):
+            lcd.move_left()
+            sleep(.5)
+        sleep(3)
+        lcd.clear()
+    #shows characters 0-31 on top line and scrolls to the left
+    #then shows characters 32-63 on top line and scrolls to the left
+    #then shows characters 64-95 on top line and scrolls to the left
+    #then shows characters 96-127 on top line and scrolls to the left
+    elif((len(input)>96)and(len(input)<=128)):
+        print("for loop 4")
+        for i in range(32):#adds characters 0-31 to variable temp_var1
+            temp_var1 += input[i]
+        print (temp_var1)
+        for j in range(32, 64):#adds characters 32-63 to variable temp_var2
+            temp_var2 += input[j]
+        print (temp_var2)
+        for k in range(64, 96):#adds characters 64-95 to variable temp_var3
+            temp_var3 += input[k]
+        print (temp_var3)
+        if(len(input)!=128):
+            for j in range(96,(len(input))):#adds characters 32- size or input to variable temp_var2
+                temp_var4 += input[j] 
+        else:
+            for l in range(96, 128):#adds characters 96-127 to variable temp_var4
+                temp_var4 += input[l]
+        print (temp_var4)
+        
+        lcd.message(temp_var1)#displays temp_var1 on top row then scrolls left
+        sleep(3)
+        for x in range(0, 16):
+            lcd.move_left()
+            sleep(.5)
+        sleep(3)
+        lcd.clear()
+        lcd.message(temp_var2)#displays temp_var2 on top row then scrolls left
+        sleep(3)
+        for x in range(0, 16):
+            lcd.move_left()
+            sleep(.5)
+        sleep(3)
+        lcd.clear()
+        lcd.message(temp_var3)#displays temp_var3 on top row then scrolls left
+        sleep(3)
+        for x in range(0, 16):
+            lcd.move_left()
+            sleep(.5)
+        sleep(3)
+        lcd.clear()
+        lcd.message(temp_var4)#displays temp_var4 on top row then scrolls left
+        sleep(3)
+        for x in range(0, 16):
+            lcd.move_left()
+            sleep(.5)
+        sleep(3)
+        lcd.clear()
+    #if input is less than 16 characters it is displayed but does not scroll
+    elif(len(input) <= 16):
+        lcd.message(input)
+        sleep(3)
+    sleep(3)
     lcd.clear()
 
 def locator_func():
@@ -118,38 +283,57 @@ def repeat_func():
 
 #asking text or voice input on display
 lcd.clear()
-lcd.message(" Input Options\n Repeat Text Voice")
+lcd.message(" Input Options\nText Repeat Voice")
 while True:
-    if button_text.is_pressed:  
+    if button_2.is_pressed: #Text Input function 
         print("input text")
         lcd.clear()
         lcd.message("  Input Text")
         text_input()
         lcd.clear()
-        lcd.message(" Input Options\n Repeat Text Voice")
+        lcd.message(" Input Options\nText Repeat Voice")
         continue
-    if button_voice.is_pressed:
+    if button_4.is_pressed: #Voice Input function
         print("input voice")
         lcd.clear()
         lcd.message("  Input Voice")
+        sleep(1)
         voice_input()
         lcd.clear()
-        lcd.message(" Input Options\n Repeat Text Voice")
+        lcd.message(" Input Options\nText Repeat Voice")
         continue
-    if button_locator.is_pressed:
+    if button_locator.is_pressed: #Locator not finished
         print("Locator")
         lcd.clear()
         lcd.message("locator enabled")
         locator_func()
         lcd.clear()
-        lcd.message(" Input Options\n Repeat Text Voice")
+        lcd.message(" Input Options\nText Repeat Voice")
         continue
-    if button_record.is_pressed:
+    if button_4.is_pressed: #repeat function #changed number from 3 to 4
         print("repeat")
         lcd.clear()
         lcd.message("repeating message")
-        repeat_func()
+        sleep(3)
+        if (input_from_user != "No Previouse Message"):
+            lcd.message(input_from_user)
+            sleep(3)
+            repeat_func()
+            continue
+        else:
+            lcd.message(input_from_user)
+            sleep(3)
         lcd.clear()
-        lcd.message(" Input Options\n Repeat Text Voice")
+        lcd.message(" Input Options\nText Repeat Voice")
         continue
+    if button_3.is_pressed:
+        print("Configerations")
+        lcd.clear()
+        lcd.message(" Configerations")
+        sleep(1)
+        lcd.clear()
+        lcd.message("Braille Speed(2)\nHaptics(3)   <--")
+        config()
+        continue
+                
 #main
