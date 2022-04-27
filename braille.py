@@ -15,6 +15,8 @@ import subprocess
 import signal
 import time
 
+
+button_1 = Button(19) #Gpio 5
 #voice input button
 button_2 = Button(5) #Gpio 5
 #start recording button
@@ -56,6 +58,8 @@ def config():
     if button_3.is_pressed: #haptics intensity
         continue
     if button_4.is_pressed: #back button
+    
+    #might still be pressed when function ends maybe add a delay or check 
         return 
   
 def text_input():
@@ -67,7 +71,7 @@ def text_input():
 
 def voice_input(): 
     lcd.clear()
-    lcd.message("Press to record")
+    lcd.message("Press to record\nButton 3")
     while True:
         if button_3.is_pressed:
             print("Button is pressed")
@@ -283,7 +287,15 @@ def repeat_func():
 
 #asking text or voice input on display
 lcd.clear()
-lcd.message(" Input Options\nText Repeat Voice")
+lcd.message("Input Options      Input Options\nConfig 1 Text 2 Repeat 3 Voice 4")
+sleep(2)
+for x in range(0, 16):
+    lcd.move_left()
+    sleep(.5)
+sleep(3)
+for x in range(0, 16):
+    lcd.move_right()
+    sleep(.5)
 while True:
     if button_2.is_pressed: #Text Input function 
         print("input text")
@@ -310,7 +322,7 @@ while True:
         lcd.clear()
         lcd.message(" Input Options\nText Repeat Voice")
         continue
-    if button_4.is_pressed: #repeat function #changed number from 3 to 4
+    if button_3.is_pressed: #repeat function #changed number from 3 to 4
         print("repeat")
         lcd.clear()
         lcd.message("repeating message")
@@ -326,7 +338,7 @@ while True:
         lcd.clear()
         lcd.message(" Input Options\nText Repeat Voice")
         continue
-    if button_3.is_pressed:
+    if button_1.is_pressed:
         print("Configerations")
         lcd.clear()
         lcd.message(" Configerations")
