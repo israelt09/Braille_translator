@@ -18,7 +18,7 @@ lcd = Adafruit_CharLCD(rs=7, en=8, d4=25, d5=24, d6=23, d7=18, cols=16, lines=2)
 
 #pi zero ip for LEDs
 #Ledlight = PiGPIOFactory(host='192.168.0.241') #home wifi ip
-Ledlight = PiGPIOFactory(host='192.168.28.233') #hotspot ip
+Ledlight = PiGPIOFactory(host='192.168.149.233') #hotspot ip
 #pi zero ip for rumble motor
 #motor = PiGPIOFactory(host='192.168.0.241')
 
@@ -27,14 +27,13 @@ braille_speed_config = 2
 
 #leds
 #left column
-led_1 = LED(25,pin_factory=Ledlight)#4
-led_3 = LED(24,pin_factory=Ledlight)#27
-led_5 = LED(23,pin_factory=Ledlight)#22
+led_1 = LED(25,pin_factory=Ledlight)
+led_3 = LED(24,pin_factory=Ledlight)
+led_5 = LED(23,pin_factory=Ledlight)
 #right column
-led_2 = LED(22,pin_factory=Ledlight)#23
-led_4 = LED(27,pin_factory=Ledlight)#24
-led_6 = LED(4,pin_factory=Ledlight)#25
-
+led_2 = LED(22,pin_factory=Ledlight)
+led_4 = LED(27,pin_factory=Ledlight)
+led_6 = LED(4,pin_factory=Ledlight)
 def SpeedBrailleUp():
     global braille_speed_config 
     braille_speed_config += 1
@@ -455,6 +454,7 @@ def word_interation(string_translate):
         #numbers
         elif string_translate[i] == '1':
             tempnum = string_translate[i-1]
+            #if index before i is a number and not first index of string
             if tempnum.isnumeric() == True and (i != 0):
                 Braille_Letter_A()
             else:

@@ -64,9 +64,20 @@ def config():
   
 def text_input():
     global input_from_user
+    #input from user taken from terminal
     input_from_user = input("enter a word to translate: ")
+    while True:
+        if (len(input_from_user) > 128):
+            #global input_from_user
+            print("over limit word limit, Enter again")
+            lcd_display("over limit")
+            input_from_user = input("enter a word to translate: ")
+        else:
+            break
     print ("word to translate: " + input_from_user)
+    #input shown on diaplay
     lcd_display(input_from_user)
+    #input sent to braille device for output
     word_interation(input_from_user)
 
 def voice_input(): 
@@ -78,8 +89,11 @@ def voice_input():
             lcd.clear()
             lcd.message("  Recording\n  Started")
             print("recording started")
+            #recording with 10 second duration
+            #saves audio to test.wav
             record = 'arecord -d 10 --format=S16_LE --rate=16000 test.wav'
             p = subprocess.Popen(record, shell=True)
+            #10 second delay so program waits for recording to finish
             sleep(10)
             print("recording over")
             lcd.clear()
@@ -120,9 +134,12 @@ def speech_api():
     output = ""
     for i in final_transcripts:
         output += ' ' + i
+    #ads output from api into global variable
     input_from_user = output
     print(input_from_user)
+    #outputs to display
     lcd_display(input_from_user)
+    #outputs to braille device
     word_interation(input_from_user)
 
 def lcd_display(input):
@@ -303,7 +320,15 @@ while True:
         lcd.message("  Input Text")
         text_input()
         lcd.clear()
-        lcd.message(" Input Options\nText Repeat Voice")
+        lcd.message("Input Options      Input Options\nConfig 1 Text 2 Repeat 3 Voice 4")
+        sleep(.5)
+        for x in range(0, 16):
+            lcd.move_left()
+            sleep(.5)
+        sleep(1)
+        for x in range(0, 16):
+            lcd.move_right()
+            sleep(.5)
         continue
     if button_4.is_pressed: #Voice Input function
         print("input voice")
@@ -312,7 +337,15 @@ while True:
         sleep(1)
         voice_input()
         lcd.clear()
-        lcd.message(" Input Options\nText Repeat Voice")
+        lcd.message("Input Options      Input Options\nConfig 1 Text 2 Repeat 3 Voice 4")
+        sleep(.5)
+        for x in range(0, 16):
+            lcd.move_left()
+            sleep(.5)
+        sleep(1)
+        for x in range(0, 16):
+            lcd.move_right()
+            sleep(.5)
         continue
     if button_locator.is_pressed: #Locator not finished
         print("Locator")
@@ -320,7 +353,15 @@ while True:
         lcd.message("locator enabled")
         locator_func()
         lcd.clear()
-        lcd.message(" Input Options\nText Repeat Voice")
+        lcd.message("Input Options      Input Options\nConfig 1 Text 2 Repeat 3 Voice 4")
+        sleep(.5)
+        for x in range(0, 16):
+            lcd.move_left()
+            sleep(.5)
+        sleep(1)
+        for x in range(0, 16):
+            lcd.move_right()
+            sleep(.5)       
         continue
     if button_3.is_pressed: #repeat function #changed number from 3 to 4
         print("repeat")
@@ -336,7 +377,15 @@ while True:
             lcd.message(input_from_user)
             sleep(3)
         lcd.clear()
-        lcd.message(" Input Options\nText Repeat Voice")
+        lcd.message("Input Options      Input Options\nConfig 1 Text 2 Repeat 3 Voice 4")
+        sleep(.5)
+        for x in range(0, 16):
+            lcd.move_left()
+            sleep(.5)
+        sleep(1)
+        for x in range(0, 16):
+            lcd.move_right()
+            sleep(.5)        
         continue
     if button_1.is_pressed:
         print("Configerations")
